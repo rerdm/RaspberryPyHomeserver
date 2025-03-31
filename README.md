@@ -18,7 +18,10 @@ LAMP is an acronym for a stack of software used to host dynamic websites and ser
    2.2 [Create index.php](#create-indexphp)<br>
 3. [Adapt Permissions (Upload Files via FTP/SFTP)](#adapt-permissions-upload-files-via-ftpsftp) <br>
    3.1 [Set File Permissions](#set-file-permissions) <br>
-   3.2 [Transfer Files Using WinSCP](#transfer-files-using-winscp)
+   3.2 [Transfer Files Using WinSCP](#transfer-files-using-winscp)<br>
+4. [Install VS Code SSH - Remote](#install-vs-code-ssh---remote)<br>
+5. [Upload the Project to Github](#upload-the-project-to-github)<br>
+6. [Security](#security)
 
 ## Preconditions
 Before starting, ensure the following:
@@ -67,24 +70,50 @@ Follow these steps to set up the LAMP server on your Raspberry Pi:
 ### Transfer Files Using WinSCP
 2. Open `WinSCP` for transferring and syncing the data.
 
+## Install VS Code SSH - Remote
 
+This extension can be used to code directly on the Raspberry Pi.
 
-## install VS Code SSH - Remote
+1. Install the extension ``Remote - SSH`` in VS code.
+2. Add a new host ``ssh <name>@<ipaddress>`` via the input field on top of VS code.
+3. Add a configuration (use the first one).
+4. VS code will connect to the host.
+5. When you click on open, you will see the folder structure. Here you can select the specific folder.
 
-This extension can be used to code direktly on the respberry py. 
+## Upload the Project to Github
 
-1. Install the extension ``Remote - SSH`` in VS code
-2. Add a new host ``ssh <name>@<ipadress>``) via the input filed on top of VS code
-3. Add a configurration ( use the first one)
-4. VS code will conetc to the host.
-5. When you click on open you will see folder structure , here you can select the specific folder.
-
-
-## Uplode the Project to Github 
-
-1. install Git on the py
+1. Install Git on the Raspberry Pi:
 
    ```bash
    sudo apt update
    sudo apt install git -y
    ``` 
+2. Set Git information:
+
+   ```bash
+   git config --global user.name "user name"
+   git config --global user.email "<your-email>@github.com"
+   ``` 
+
+3. Initialize the project:
+
+   ```bash
+   git init
+   ``` 
+
+4. Generate a token in [Github](https://github.com/settings/tokens).
+
+5. Upload files to Github:
+
+   ```bash
+   git remote add origin https://github.com/yourName/raspberry-webserver.git
+   git branch -M master
+   git add .
+   git commit -m "initial commit"
+   git push -u origin master  --> will request you to add username and password/GitHubToken 
+   ```
+
+## Security
+Ensure sensitive files like `creds/token.txt` are ignored by Git using `.gitignore`. Never share sensitive tokens publicly.
+
+
