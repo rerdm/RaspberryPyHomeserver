@@ -23,42 +23,45 @@ LAMP is an acronym for a stack of software used to host dynamic websites and ser
 5. [Upload the Project to Github](#upload-the-project-to-github)<br>
 6. [Security](#security)
 
-## Preconditions
+## Hardware 
 Before starting, ensure the following:
 - A Raspberry Pi is available.
 - The Raspberry Pi OS is flashed onto an SD card. You can use the [Raspberry Pi Imager](https://www.raspberrypi.com/software/) to flash the OS image.
 
-### Enabled SSH
-1. Update the configuration:
+## Perperation
+
+### Raspberry Py and VS Code
+
+#### Enabled SSH on the Raspberry Py
+   Update the configuration:
 
    ```bash
    sudo raspi-config  -->  Interface Options > SSH > Enable
    sudo reboot
    ```
 
-## Setting Up the LAMP Server
-Follow these steps to set up the LAMP server on your Raspberry Pi:
+#### Setting Up the LAMP Server
+Follow these steps to set up the LAMP server on your Raspberry Py<br>
+Update the package list and install required software:
 
-### Update the Package List
-1. Update the package list and install required software:
    ```bash
    sudo apt update
    sudo apt upgrade -y
    sudo apt install apache2 php libapache2-mod-php -y
    ```
    After this, your server is reachable via `http://<your-ip>`.
-
-### Create index.php
-2. Create the default `index.php` file:
+   
+   Create the default `index.php` file:
+   
    ```bash
    sudo rm /var/www/html/index.html
    sudo nano /var/www/html/index.php
    ```
+<b>Note:</b> /var/www/html/ is the root location from ypu LAMP project.
 
-## Adapt Permissions (Upload Files via FTP/SFTP)
+#### Adapt Permissions (Upload Files via FTP/SFTP)
 
-### Set File Permissions
-1. Set file permissions:
+   Set file permissions:
 
    ```bash
    sudo chown -R <username>:www-data /var/www/html
@@ -67,12 +70,10 @@ Follow these steps to set up the LAMP server on your Raspberry Pi:
    sudo chmod -R 775 /var/www/html
    ```
 
-### Transfer Files Using WinSCP
-2. Open `WinSCP` for transferring and syncing the data.
 
-## Install VS Code SSH - Remote
+### Install plugin SSH - Remote on VS Code
 
-This extension can be used to code directly on the Raspberry Pi.
+This extension can be used to code directly on the Raspberry Py.
 
 1. Install the extension ``Remote - SSH`` in VS code.
 2. Add a new host ``ssh <name>@<ipaddress>`` via the input field on top of VS code.
@@ -80,7 +81,9 @@ This extension can be used to code directly on the Raspberry Pi.
 4. VS code will connect to the host.
 5. When you click on open, you will see the folder structure. Here you can select the specific folder.
 
-## Upload the Project to Github(Token)
+## GitHub
+
+### Seting up the config
 
 1. Install Git on the Raspberry Pi:
 
@@ -101,12 +104,21 @@ This extension can be used to code directly on the Raspberry Pi.
    git init
    ``` 
 
-4. Generate a token in [Github](https://github.com/settings/tokens).
+4. Set the Git-Remote Settings for teh Project 
+   ```bash
+   git remote set-url origin git@github.com:rerdm/RaspberryPyHomeserver.git
+   ``` 
 
+### Acessing the GitHub project via Token
 
-### Github SSH key
+- Generate a token in [Github](https://github.com/settings/tokens).
+- When you push your code you have to enter the GitHub ``username`` and ``passwort`` (GitHubToken)<br>
+<b>Note</b>: with this setting you have to enter the credentials after every push.
 
-To establish a connection between your Raspberry Pi and GitHub using an SSH key (so you don't have to enter your credentials every time you push), follow these steps:
+### Establish connection via Github SSH key
+
+By setting up SSH-Key connection between the Py and github , you are not requested to 
+Enter your credentials after every push.
 
 1. **Generate an SSH key** on your Raspberry Pi:
    ```bash
@@ -147,18 +159,41 @@ To establish a connection between your Raspberry Pi and GitHub using an SSH key 
    git remote set-url origin git@github.com:yourName/raspberry-webserver.git
    ```
 
-
 Upload files to Github:
 
    ```bash
-   git remote add origin https://github.com/yourName/raspberry-webserver.git
-   git branch -M master
    git add .
    git commit -m "initial commit"
-   git push -u origin master  --> will request you to add username and password/GitHubToken 
+   git push 
    ```
+
+## Seting Up a Static IP adredd in the Raspberry Py
+
+If you work remotly on the Py you shudl set a static ip adress. Because after restart it can be that the 
+py select another ip adress. In this case you have make the config again.
+In this case i have set the stati ip adress for my wlan ``Wlan0`` and set it to ip adrerss ``192.168.2.146``
+
+   1. Setting up the static IP-adress
+
+   ```bash
+   nmcli connection modify "WLAN-500605" ipv4.addresses 192.168.2.146/24
+   nmcli connection modify "WLAN-500605" ipv4.gateway 192.168.2.1
+   nmcli connection modify "WLAN-500605" ipv4.dns 192.168.2.1
+   nmcli connection modify "WLAN-500605" ipv4.method manual
+   ```
+   2. Restart connection 
+   ```bash
+   nmcli connection down "WLAN-500605" && nmcli connection up "WLAN-500605"
+   ```
+
+
 
 ## Security
 Ensure sensitive files like `creds/token.txt` are ignored by Git using `.gitignore`. Never share sensitive tokens publicly.
+
+## Tools 
+
+
+- Install `WinSCP` to transvere Data to the Raspberry Py.
 
 
