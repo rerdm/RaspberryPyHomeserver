@@ -80,7 +80,7 @@ This extension can be used to code directly on the Raspberry Pi.
 4. VS code will connect to the host.
 5. When you click on open, you will see the folder structure. Here you can select the specific folder.
 
-## Upload the Project to Github
+## Upload the Project to Github(Token)
 
 1. Install Git on the Raspberry Pi:
 
@@ -103,7 +103,52 @@ This extension can be used to code directly on the Raspberry Pi.
 
 4. Generate a token in [Github](https://github.com/settings/tokens).
 
-5. Upload files to Github:
+
+### Github SSH key
+
+To establish a connection between your Raspberry Pi and GitHub using an SSH key (so you don't have to enter your credentials every time you push), follow these steps:
+
+1. **Generate an SSH key** on your Raspberry Pi:
+   ```bash
+   ssh-keygen -t ed25519 -C "<your-email>@github.com"
+   ```
+   - When prompted for a file to save the key, press `Enter` to use the default location (`~/.ssh/id_ed25519`).
+   - When asked for a passphrase, press `Enter` to leave it empty (no password).
+
+2. **Add the SSH key to the SSH agent**:
+   ```bash
+   eval "$(ssh-agent -s)"
+   ssh-add ~/.ssh/id_ed25519
+   ```
+   This step ensures that your SSH key is loaded into the SSH agent, which manages your private keys. By doing this, you won't need to repeatedly enter the passphrase for the SSH key during your Git operations or other SSH-based connections.
+
+3. **Copy the public key**:
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   ```
+   - Copy the output of this command to your clipboard.
+
+4. **Add the SSH key to your GitHub account**:
+   - Go to [GitHub SSH settings](https://github.com/settings/keys).
+   - Click on **New SSH key**.
+   - Paste the public key you copied earlier into the "Key" field.
+   - Give it a title (e.g., "Raspberry Pi").
+   - Click **Add SSH key**.
+
+5. **Test the SSH connection**:
+   ```bash
+   ssh -T git@github.com
+   ```
+   - If successful, you will see a message like:  
+     `Hi <username>! You've successfully authenticated, but GitHub does not provide shell access.`
+
+6. **Update your Git remote to use SSH**:
+   ```bash
+   git remote set-url origin git@github.com:yourName/raspberry-webserver.git
+   ```
+
+
+Upload files to Github:
 
    ```bash
    git remote add origin https://github.com/yourName/raspberry-webserver.git
